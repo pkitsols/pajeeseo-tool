@@ -2,38 +2,97 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pajeeseo Diagnostic Tool</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background-color: #F9FAFB; display: flex; justify-content: center; padding: 50px; }
-        .card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 100%; max-width: 500px; }
-        h2 { color: #111827; margin-top: 0; }
-        input { width: 100%; padding: 12px; margin: 15px 0; border: 1px solid #D1D5DB; border-radius: 8px; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; background-color: #2563EB; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: #F9FAFB; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .card { 
+            background: white; 
+            padding: 30px; 
+            border-radius: 16px; 
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); 
+            width: 100%; 
+            max-width: 500px; 
+        }
+        h2 { color: #111827; margin-bottom: 20px; text-align: center; }
+        input { 
+            width: 100%; 
+            padding: 14px; 
+            margin-bottom: 15px; 
+            border: 1px solid #D1D5DB; 
+            border-radius: 8px; 
+            box-sizing: border-box; 
+            font-size: 16px;
+        }
+        button { 
+            width: 100%; 
+            padding: 14px; 
+            background-color: #2563EB; 
+            color: white; 
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-size: 16px;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
         button:hover { background-color: #1D4ED8; }
+        #result { 
+            margin-top: 20px; 
+            padding: 15px; 
+            border-radius: 8px; 
+            text-align: center;
+        }
     </style>
 </head>
 <body>
+
     <div class="card">
         <h2>SEO Diagnostic Tool</h2>
         <input type="text" id="urlInput" placeholder="Enter Website URL (e.g., https://google.com)">
         <button onclick="runDiagnostic()">Run Diagnostic</button>
-        <div id="result" style="margin-top: 20px;"></div>
+        <div id="result"></div>
     </div>
 
     <script>
         async function runDiagnostic() {
             const url = document.getElementById('urlInput').value;
             const resDiv = document.getElementById('result');
-            resDiv.innerText = "Loading...";
+            
+            if (!url) {
+                resDiv.innerHTML = "<p style='color:red;'>Please enter a valid URL.</p>";
+                return;
+            }
+
+            resDiv.innerHTML = "<p style='color:#6B7280;'>Analyzing website...</p>";
             
             try {
-                // Backend proxy ko call kar rahe hain
                 const response = await fetch(`/api/proxy?type=pagespeed&url=${encodeURIComponent(url)}`);
                 const data = await response.json();
-                resDiv.innerText = "Audit complete! (Check Console for details)";
-                console.log(data);
+                
+                if (data.lighthouseResult) {
+                    const score = Math.round(data.lighthouseResult.categories.seo.score * 100);
+                    resDiv.innerHTML = `
+                        <div style="background:#EFF6FF; padding:15px; border-radius:8px;">
+                            <h3 style="margin:0; color:#1E40AF;">SEO Score: ${score}%</h3>
+                            <p style="margin:5px 0 0 0; font-size:14px; color:#374151;">
+                                Report generated successfully!
+                            </p>
+                        </div>`;
+                } else {
+                    resDiv.innerHTML = "<p style='color:red;'>Could not retrieve SEO score. Try another URL.</p>";
+                }
             } catch (err) {
-                resDiv.innerText = "Error: " + err.message;
+                resDiv.innerHTML = "<p style='color:red;'>Error: Connection failed.</p>";
             }
         }
     </script>
