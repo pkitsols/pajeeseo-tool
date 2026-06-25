@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Pajeeseo.pk - Premium SEO Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #0b0f19; color: #f3f4f6; }
+        .glass-card { background: rgba(17, 24, 39, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+    </style>
+</head>
+<body class="p-6">
+    <div class="max-w-4xl mx-auto mt-10">
+        <h1 class="text-3xl font-bold text-center mb-10">Pajeeseo Diagnostic Tool</h1>
+        
+        <!-- Step 1 Section -->
+        <div class="glass-card p-8 rounded-2xl">
+            <input type="text" id="url-input" placeholder="Enter Website URL (e.g., https://google.com)" class="w-full bg-gray-900 border border-gray-700 p-4 rounded-xl text-white mb-4">
+            <button onclick="runDiagnostic()" class="bg-purple-600 px-8 py-4 rounded-xl font-bold">Run Diagnostic</button>
+            <div id="result-area" class="mt-6 text-gray-400"></div>
+        </div>
+
+        <!-- Lead Form -->
+        <form action="https://formspree.io/f/mpqgpwje" method="POST" class="mt-10 p-6 bg-gray-900 rounded-xl">
+            <h3 class="text-xl font-bold mb-4">Get Full SEO Report</h3>
+            <input type="email" name="email" placeholder="Your Email" class="w-full p-3 mb-3 bg-gray-800 rounded" required>
+            <button type="submit" class="bg-indigo-600 px-6 py-3 rounded-lg font-bold">Send Me The Report</button>
+        </form>
+    </div>
+
+    <script>
+        async function runDiagnostic() {
+            const url = document.getElementById('url-input').value;
+            const res = await fetch(`/api/proxy?type=pagespeed&url=${encodeURIComponent(url)}`);
+            const data = await res.json();
+            document.getElementById('result-area').innerText = "Data received! (Check console for details)";
+            console.log(data);
+        }
+    </script>
+</body>
+</html>
