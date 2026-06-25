@@ -2,78 +2,39 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Pajeeseo.pk - Premium SEO Platform</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #F9FAFB;
-  color: #1F2937;
-  display: flex;
-  justify-content: center;
-  padding: 40px 20px;
-}
-
-.container {
-  background: white;
-  padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  max-width: 500px;
-  width: 100%;
-}
-
-input {
-  width: 100%;
-  padding: 12px;
-  margin: 10px 0;
-  border: 1px solid #D1D5DB;
-  border-radius: 8px;
-  box-sizing: border-box; /* Zaroori hai taake input bahar na nikle */
-}
-
-button {
-  background-color: #3B82F6;
-  color: white;
-  padding: 12px 20px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
-  width: 100%;
-}
-
-button:hover {
-  background-color: #2563EB;
-}
-    
+    <title>Pajeeseo Diagnostic Tool</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background-color: #F9FAFB; display: flex; justify-content: center; padding: 50px; }
+        .card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 100%; max-width: 500px; }
+        h2 { color: #111827; margin-top: 0; }
+        input { width: 100%; padding: 12px; margin: 15px 0; border: 1px solid #D1D5DB; border-radius: 8px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background-color: #2563EB; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; }
+        button:hover { background-color: #1D4ED8; }
+    </style>
 </head>
-<body class="p-6">
-    <div class="max-w-4xl mx-auto mt-10">
-        <h1 class="text-3xl font-bold text-center mb-10">Pajeeseo Diagnostic Tool</h1>
-        
-        <!-- Step 1 Section -->
-        <div class="glass-card p-8 rounded-2xl">
-            <input type="text" id="url-input" placeholder="Enter Website URL (e.g., https://google.com)" class="w-full bg-gray-900 border border-gray-700 p-4 rounded-xl text-white mb-4">
-            <button onclick="runDiagnostic()" class="bg-purple-600 px-8 py-4 rounded-xl font-bold">Run Diagnostic</button>
-            <div id="result-area" class="mt-6 text-gray-400"></div>
-        </div>
-
-        <!-- Lead Form -->
-        <form action="https://formspree.io/f/mpqgpwje" method="POST" class="mt-10 p-6 bg-gray-900 rounded-xl">
-            <h3 class="text-xl font-bold mb-4">Get Full SEO Report</h3>
-            <input type="email" name="email" placeholder="Your Email" class="w-full p-3 mb-3 bg-gray-800 rounded" required>
-            <button type="submit" class="bg-indigo-600 px-6 py-3 rounded-lg font-bold">Send Me The Report</button>
-        </form>
+<body>
+    <div class="card">
+        <h2>SEO Diagnostic Tool</h2>
+        <input type="text" id="urlInput" placeholder="Enter Website URL (e.g., https://google.com)">
+        <button onclick="runDiagnostic()">Run Diagnostic</button>
+        <div id="result" style="margin-top: 20px;"></div>
     </div>
 
     <script>
         async function runDiagnostic() {
-            const url = document.getElementById('url-input').value;
-            const res = await fetch(`/api/proxy?type=pagespeed&url=${encodeURIComponent(url)}`);
-            const data = await res.json();
-            document.getElementById('result-area').innerText = "Data received! (Check console for details)";
-            console.log(data);
+            const url = document.getElementById('urlInput').value;
+            const resDiv = document.getElementById('result');
+            resDiv.innerText = "Loading...";
+            
+            try {
+                // Backend proxy ko call kar rahe hain
+                const response = await fetch(`/api/proxy?type=pagespeed&url=${encodeURIComponent(url)}`);
+                const data = await response.json();
+                resDiv.innerText = "Audit complete! (Check Console for details)";
+                console.log(data);
+            } catch (err) {
+                resDiv.innerText = "Error: " + err.message;
+            }
         }
     </script>
 </body>
